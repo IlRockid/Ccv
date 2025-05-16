@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block title %}Impostazioni - Ancora CAS{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h1 class="h2 mb-4"><i class="fas fa-cog"></i> Impostazioni</h1>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Sicurezza</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('settings') }}">
+                <div class="mb-3">
+                    <label for="current_password" class="form-label">Password attuale</label>
+                    <input type="password" class="form-control" id="current_password" name="current_password">
+                </div>
+                <div class="mb-3">
+                    <label for="new_password" class="form-label">Nuova password</label>
+                    <input type="password" class="form-control" id="new_password" name="new_password">
+                    <div class="form-text">
+                        Lascia vuoto per mantenere la password attuale
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="confirm_password" class="form-label">Conferma nuova password</label>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salva impostazioni
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">Informazioni di sistema</h5>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th scope="row">Nome Applicazione</th>
+                        <td>Ancora CAS</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Versione</th>
+                        <td>1.0.0</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Indirizzo</th>
+                        <td>Via IV Novembre, Varazze</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

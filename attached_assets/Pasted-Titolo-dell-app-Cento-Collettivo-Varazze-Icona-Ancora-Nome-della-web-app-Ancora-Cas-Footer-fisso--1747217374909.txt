@@ -1,0 +1,146 @@
+Titolo dell'app: Cento Collettivo Varazze
+Icona: Ancora
+Nome della web app: Ancora Cas
+Footer fisso: Ancora Centro di Accoglienza Straordinaria, Via IV Novembre. Varazze.
+ Funzionalità da implementare
+
+    Accesso protetto da password all’avvio
+
+        La pagina iniziale deve richiedere una password per accedere.
+
+        Password iniziale: ancoracas25
+
+    Inserimento dati ospiti
+
+        Campi richiesti:
+
+            Cognome
+
+            Nome
+
+            Sesso (M/F)
+
+            Luogo di nascita
+
+            Provincia (sigla)
+
+            Data di nascita
+
+            Numero permesso di soggiorno
+
+            Data rilascio permesso di soggiorno
+
+            Calcolo automatico della scadenza (6 mesi dopo)
+
+            Avviso automatico 7 giorni prima della scadenza
+
+            Numero tessera sanitaria e data di scadenza
+
+            Data di inserimento nella struttura
+
+            Numero stanza
+
+            Piano
+
+            Relazioni familiari (figlio di, coniuge di, genitore di…)
+
+            Caselle aggiuntive personalizzabili (aggiungi campo)
+
+    Calcolo automatico del codice fiscale
+
+        Basato sulle regole ufficiali:
+
+            3 consonanti del cognome
+
+            3 consonanti del nome (1ª, 3ª, 4ª)
+
+            2 cifre dell’anno
+
+            Lettera del mese (A = Gennaio, B = Febbraio, ...)
+
+            Giorno (+40 se sesso = F)
+
+            Codice catastale del comune (o codice per stato estero)
+
+            Carattere di controllo
+
+    Gestione database ospiti
+
+        Uso di SQLite
+
+        Aggiunta, modifica, eliminazione ospiti
+
+        Dashboard con elenco completo
+
+        Ricerca e filtro per:
+
+            Nazionalità
+
+            Età (maggiorenne/minorenne)
+
+            Stanza
+
+            Data di ingresso o uscita
+
+        Calcolo età automatico
+
+    Esportazione dati
+
+        Possibilità di esportare PDF o Excel
+
+        Inclusione solo dei dati selezionati tramite filtro
+
+        Scritta sul file esportato: “File aggiornato al [data attuale]”
+
+ Struttura tecnica richiesta
+
+    Backend: Python 3 + Flask
+
+    Frontend: HTML5 + CSS (Bootstrap 5)
+
+    Database: SQLite
+
+    Funzionalità extra:
+
+        Script per calcolo codice fiscale
+
+        Gestione notifiche scadenze
+
+        Interfaccia professionale responsive
+
+        Pulsante per aggiungere campi dinamici
+
+ Template frontend
+
+Usa un template Bootstrap 5 professionale e semplice, tipo AdminLTE o Argon Dashboard Flask. La struttura visiva deve includere:
+
+    Barra laterale (sidebar) con navigazione (Home, Nuovo Ospite, Archivio, Esportazione, Impostazioni)
+
+    Header con logo "Ancora Cas"
+
+    Footer fisso con indirizzo
+
+    Stile sobrio, professionale, leggibile anche su mobile
+
+ Sicurezza e accessi
+
+    Login base (password fissa iniziale)
+
+    Se possibile, espandibile con più utenti
+
+    I dati devono essere salvati solo localmente sul DB SQLite (per uso su Replit)
+
+ Output atteso
+
+    Una web app funzionante ospitata su Replit
+
+    Interfaccia di inserimento e gestione ospiti
+
+    Codice fiscale generato in automatico
+
+    Permessi di soggiorno monitorati con scadenza
+
+    Possibilità di esportare e filtrare dati
+
+    Interfaccia moderna e chiara
+

@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+
+{% block title %}Archivio Ospiti - Ancora CAS{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h1 class="h2 mb-4"><i class="fas fa-archive"></i> Archivio Ospiti</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            {% if guests %}
+            <table id="guests-table" class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Cognome</th>
+                        <th>Nome</th>
+                        <th>Data di nascita</th>
+                        <th>Età</th>
+                        <th>Stanza</th>
+                        <th>Luogo di nascita</th>
+                        <th>Scad. permesso</th>
+                        <th>Data ingresso</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for guest in guests %}
+                    <tr>
+                        <td>{{ guest.last_name }}</td>
+                        <td>{{ guest.first_name }}</td>
+                        <td>{{ guest.birth_date.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ calculate_age(guest.birth_date) }}</td>
+                        <td>{{ guest.room_number }}</td>
+                        <td>{{ guest.birth_place }}</td>
+                        <td>
+                            {% if guest.permit_expiry %}
+                                {{ guest.permit_expiry.strftime('%d/%m/%Y') }}
+                                {% set days_to_expiry = (guest.permit_expiry - now).days %}
+                                {% if days_to_expiry <= 7 and days_to_expiry >= 0 %}
+                                    <span class="badge bg-warning">{{ days_to_expiry }} giorni</span>
+                                {% elif days_to_expiry < 0 %}
+                                    <span class="badge bg-danger">Scaduto</span>
+                                {% endif %}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>{{ guest.entry_date.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ url_for('guest_detail', guest_id=guest.id) }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ url_for('edit_guest', guest_id=guest.id) }}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete({{ guest.id }}, '{{ guest.first_name }} {{ guest.last_name }}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <form id="delete-form-{{ guest.id }}" action="{{ url_for('delete_guest', guest_id=guest.id) }}" method="POST" style="display: none;"></form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Nessun ospite presente nel database.
+            </div>
+            {% endif %}
+            
+            <div class="text-center mt-4">
+                <a href="{{ url_for('new_guest') }}" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Nuovo Ospite
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set the current date for calculating days to expiry
+        window.now = new Date();
+    });
+</script>
+{% endblock %}

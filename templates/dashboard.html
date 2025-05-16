@@ -1,0 +1,157 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard - Ancora CAS{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h1 class="h2 mb-4">Dashboard</h1>
+    
+    <!-- Stats Cards -->
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-value">{{ total_guests }}</div>
+                    <div class="stat-label">Ospiti totali</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-value">{{ expiring_permits }}</div>
+                    <div class="stat-label">Permessi in scadenza</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-value">{{ today_date }}</div>
+                    <div class="stat-label">Data odierna</div>
+                    <script>
+                        document.querySelector('.stat-value:last-of-type').textContent = new Date().toLocaleDateString('it-IT');
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Expiring Permits Alert -->
+    {% if expiring_permits > 0 %}
+    <div class="card mb-4 expiring-permits">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-exclamation-triangle"></i>
+                Permessi di soggiorno in scadenza
+            </h5>
+        </div>
+        <div class="card-body">
+            <p>I seguenti ospiti hanno il permesso di soggiorno in scadenza nei prossimi 7 giorni:</p>
+            
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Cognome</th>
+                        <th>Nome</th>
+                        <th>Numero permesso</th>
+                        <th>Scadenza</th>
+                        <th>Giorni rimasti</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for guest in expiring_list %}
+                    <tr>
+                        <td>{{ guest.last_name }}</td>
+                        <td>{{ guest.first_name }}</td>
+                        <td>{{ guest.permit_number }}</td>
+                        <td>{{ guest.permit_expiry.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            {% set days = (guest.permit_expiry - today).days %}
+                            <span class="{% if days <= 3 %}text-danger{% else %}text-warning{% endif %}">
+                                {{ days }} giorni
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('guest_detail', guest_id=guest.id) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye"></i> Visualizza
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Latest Additions -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Ultimi ospiti inseriti</h5>
+        </div>
+        <div class="card-body">
+            {% if latest_guests %}
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Cognome</th>
+                        <th>Nome</th>
+                        <th>Data di nascita</th>
+                        <th>Età</th>
+                        <th>Stanza</th>
+                        <th>Data inserimento</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for guest in latest_guests %}
+                    <tr>
+                        <td>{{ guest.last_name }}</td>
+                        <td>{{ guest.first_name }}</td>
+                        <td>{{ guest.birth_date.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ calculate_age(guest.birth_date) }}</td>
+                        <td>{{ guest.room_number }}</td>
+                        <td>{{ guest.entry_date.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            <a href="{{ url_for('guest_detail', guest_id=guest.id) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('edit_guest', guest_id=guest.id) }}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="text-muted">Nessun ospite inserito.</p>
+            {% endif %}
+            
+            <div class="text-center mt-3">
+                <a href="{{ url_for('archive') }}" class="btn btn-primary">
+                    <i class="fas fa-archive"></i> Visualizza tutti gli ospiti
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set current date for days calculation
+    var today = new Date();
+</script>
+{% endblock %}

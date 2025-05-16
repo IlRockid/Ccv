@@ -1,0 +1,13 @@
+flask
+python-dateutil
+itsdangerous==2.1.2
+flask-sqlalchemy
+flask-wtf
+pandas
+sqlalchemy
+werkzeug
+wtforms
+weasyprint
+gunicorn
+psycopg2-binary
+xlsxwriter

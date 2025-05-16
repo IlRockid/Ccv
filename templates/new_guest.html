@@ -1,0 +1,264 @@
+{% extends "layout.html" %}
+
+{% block title %}{% if edit_mode %}Modifica Ospite{% else %}Nuovo Ospite{% endif %} - Ancora CAS{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h1 class="h2 mb-4">
+        {% if edit_mode %}
+        <i class="fas fa-user-edit"></i> Modifica Ospite
+        {% else %}
+        <i class="fas fa-user-plus"></i> Nuovo Ospite
+        {% endif %}
+    </h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" 
+                  {% if edit_mode %}
+                  action="{{ url_for('edit_guest', guest_id=guest.id) }}"
+                  {% else %}
+                  action="{{ url_for('new_guest') }}"
+                  {% endif %}>
+                
+                <!-- Guest Personal Information -->
+                <h5 class="card-title mb-3">Dati Personali</h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="last_name" class="form-label">Cognome *</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" required
+                               value="{% if guest %}{{ guest.last_name }}{% endif %}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="first_name" class="form-label">Nome *</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" required
+                               value="{% if guest %}{{ guest.first_name }}{% endif %}">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="gender" class="form-label">Sesso *</label>
+                        <select class="form-select" id="gender" name="gender" required>
+                            <option value="">Seleziona...</option>
+                            <option value="M" {% if guest and guest.gender == 'M' %}selected{% endif %}>Maschio</option>
+                            <option value="F" {% if guest and guest.gender == 'F' %}selected{% endif %}>Femmina</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="birth_date" class="form-label">Data di nascita *</label>
+                        <div>
+                            <input type="date" class="form-control" id="birth_date" name="birth_date" required
+                                  value="{% if guest and guest.birth_date %}{{ guest.birth_date.strftime('%Y-%m-%d') }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="birth_place" class="form-label">Luogo di nascita *</label>
+                        <input type="text" class="form-control" id="birth_place" name="birth_place" required
+                               value="{% if guest %}{{ guest.birth_place }}{% endif %}">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="province" class="form-label">Provincia (sigla)</label>
+                        <input type="text" class="form-control" id="province" name="province" maxlength="2"
+                               value="{% if guest %}{{ guest.province }}{% endif %}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="fiscal_code" class="form-label">Codice Fiscale</label>
+                        <div class="d-flex">
+                            <input type="text" class="form-control" id="fiscal_code" name="fiscal_code" maxlength="16"
+                                   value="{% if guest %}{{ guest.fiscal_code }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3 d-flex align-items-end">
+                        <button type="button" class="btn btn-primary" id="calculate-cf-btn" style="margin-bottom: 1px;">
+                            <i class="fas fa-calculator"></i> Calcola
+                        </button>
+                    </div>
+                    <!-- Campo country_code nascosto poiché il calcolo è automatico -->
+                    <input type="hidden" id="country_code" name="country_code" value="">
+                </div>
+                
+                <!-- Permit Information -->
+                <h5 class="card-title mb-3 mt-4">Documenti</h5>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="permit_number" class="form-label">Numero permesso di soggiorno</label>
+                        <input type="text" class="form-control" id="permit_number" name="permit_number"
+                               value="{% if guest %}{{ guest.permit_number }}{% endif %}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="permit_date" class="form-label">Data rilascio</label>
+                        <div>
+                            <input type="date" class="form-control" id="permit_date" name="permit_date"
+                                  value="{% if guest and guest.permit_date %}{{ guest.permit_date.strftime('%Y-%m-%d') }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="permit_expiry" class="form-label">Scadenza (calcolata)</label>
+                        <div>
+                            <input type="date" class="form-control" id="permit_expiry" name="permit_expiry" readonly
+                                  value="{% if guest and guest.permit_expiry %}{{ guest.permit_expiry.strftime('%Y-%m-%d') }}{% endif %}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="health_card" class="form-label">Numero tessera sanitaria</label>
+                        <input type="text" class="form-control" id="health_card" name="health_card"
+                               value="{% if guest %}{{ guest.health_card }}{% endif %}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="health_card_expiry" class="form-label">Scadenza tessera sanitaria</label>
+                        <div>
+                            <input type="date" class="form-control" id="health_card_expiry" name="health_card_expiry"
+                                  value="{% if guest and guest.health_card_expiry %}{{ guest.health_card_expiry.strftime('%Y-%m-%d') }}{% endif %}">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Accommodation Information -->
+                <h5 class="card-title mb-3 mt-4">Alloggio</h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="room_number" class="form-label">Numero stanza</label>
+                        <input type="text" class="form-control" id="room_number" name="room_number"
+                               value="{% if guest %}{{ guest.room_number }}{% endif %}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="floor" class="form-label">Piano</label>
+                        <input type="text" class="form-control" id="floor" name="floor"
+                               value="{% if guest %}{{ guest.floor }}{% endif %}">
+                    </div>
+                    <input type="hidden" id="entry_date" name="entry_date" 
+                           value="{% if guest and guest.entry_date %}{{ guest.entry_date.strftime('%Y-%m-%d') }}{% else %}{{ today }}{% endif %}">
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="check_in_date" class="form-label">Data Check-in</label>
+                        <div>
+                            <input type="date" class="form-control" id="check_in_date" name="check_in_date"
+                                  value="{% if guest and guest.check_in_date %}{{ guest.check_in_date.strftime('%Y-%m-%d') }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="check_out_date" class="form-label">Data Check-out</label>
+                        <div>
+                            <input type="date" class="form-control" id="check_out_date" name="check_out_date"
+                                  value="{% if guest and guest.check_out_date %}{{ guest.check_out_date.strftime('%Y-%m-%d') }}{% endif %}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">Relazioni familiari</h6>
+                    </div>
+                    <div class="card-body" id="family-relations-container">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="relation-type" class="form-label">Tipo relazione</label>
+                                <select class="form-select" id="relation-type">
+                                    <option value="">Seleziona relazione...</option>
+                                    <option value="figlio">Figlio/a</option>
+                                    <option value="genitore">Genitore</option>
+                                    <option value="coniuge">Coniuge</option>
+                                    <option value="fratello">Fratello/Sorella</option>
+                                    <option value="zio">Zio/Zia</option>
+                                    <option value="nipote">Nipote</option>
+                                    <option value="cugino">Cugino/a</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="related-guest" class="form-label">Persona correlata</label>
+                                <select class="form-select" id="related-guest">
+                                    <option value="">Seleziona persona...</option>
+                                    {% for existing_guest in all_guests %}
+                                    {% if not guest or existing_guest.id != guest.id %}
+                                    <option value="{{ existing_guest.id }}">{{ existing_guest.first_name }} {{ existing_guest.last_name }}</option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="button" class="btn btn-primary form-control" id="add-relation-btn">
+                                    <i class="fas fa-plus"></i> Aggiungi
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="family_relations" class="form-label">Relazioni registrate</label>
+                                <textarea class="form-control" id="family_relations" name="family_relations" rows="3">{% if guest %}{{ guest.family_relations }}{% endif %}</textarea>
+                                <small class="form-text text-muted">Qui verranno elencate le relazioni aggiunte. È possibile anche modificare il testo direttamente.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Custom Fields -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">Campi Personalizzati</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="custom-fields-container" class="custom-fields-container mb-3">
+                            {% if custom_fields %}
+                                {% for field in custom_fields %}
+                                    <div class="row custom-field-row existing-custom-field mb-2">
+                                        <div class="col-md-5">
+                                            <input type="text" class="form-control" name="custom_field_name_{{ loop.index }}" value="{{ field.field_name }}" placeholder="Nome campo">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input type="text" class="form-control" name="custom_field_{{ loop.index }}" value="{{ field.field_value }}" placeholder="Valore">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-danger btn-remove-field" data-field-id="{{ loop.index }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <button type="button" id="add-custom-field" class="btn btn-secondary">
+                            <i class="fas fa-plus"></i> Aggiungi campo personalizzato
+                        </button>
+                        <small class="form-text text-muted mt-2">
+                            Puoi aggiungere campi personalizzati per inserire informazioni aggiuntive sull'ospite.
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('archive') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Indietro
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Salva
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set today's date as default
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!document.getElementById('entry_date').value) {
+            document.getElementById('entry_date').value = new Date().toISOString().substr(0, 10);
+        }
+    });
+</script>
+{% endblock %}

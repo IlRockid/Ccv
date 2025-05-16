@@ -1,0 +1,176 @@
+{% extends "layout.html" %}
+
+{% block title %}Dettaglio Ospite - Ancora CAS{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h1 class="h2 mb-4">
+        <i class="fas fa-user"></i> 
+        {{ guest.first_name }} {{ guest.last_name }}
+    </h1>
+    
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Dati personali</h5>
+            <div>
+                <a href="{{ url_for('edit_guest', guest_id=guest.id) }}" class="btn btn-sm btn-warning">
+                    <i class="fas fa-edit"></i> Modifica
+                </a>
+                <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete({{ guest.id }}, '{{ guest.first_name }} {{ guest.last_name }}')">
+                    <i class="fas fa-trash"></i> Elimina
+                </button>
+                <form id="delete-form-{{ guest.id }}" action="{{ url_for('delete_guest', guest_id=guest.id) }}" method="POST" style="display: none;"></form>
+            </div>
+        </div>
+        <div class="card-body guest-detail">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <div class="label">Cognome e Nome</div>
+                        <div class="value fs-5 fw-bold">{{ guest.last_name }} {{ guest.first_name }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="label">Sesso</div>
+                        <div class="value">{{ 'Maschio' if guest.gender == 'M' else 'Femmina' }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="label">Data di nascita</div>
+                        <div class="value">
+                            {{ guest.birth_date.strftime('%d/%m/%Y') }}
+                            <span class="text-muted">({{ calculate_age(guest.birth_date) }} anni)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="label">Luogo di nascita</div>
+                        <div class="value">{{ guest.birth_place }} {% if guest.province %}({{ guest.province }}){% endif %}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="label">Codice Fiscale</div>
+                        <div class="value">{{ guest.fiscal_code or 'Non inserito' }}</div>
+                    </div>
+                    <!-- Campo Codice Paese rimosso perché non più necessario -->
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <div class="label">Numero permesso di soggiorno</div>
+                        <div class="value">{{ guest.permit_number or 'Non inserito' }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="label">Data rilascio permesso</div>
+                        <div class="value">{{ guest.permit_date.strftime('%d/%m/%Y') if guest.permit_date else 'Non inserito' }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="label">Scadenza permesso</div>
+                        <div class="value">
+                            {% if guest.permit_expiry %}
+                                {{ guest.permit_expiry.strftime('%d/%m/%Y') }}
+                                {% set days_to_expiry = (guest.permit_expiry - now).days %}
+                                {% if days_to_expiry <= 7 and days_to_expiry >= 0 %}
+                                    <span class="badge bg-warning">{{ days_to_expiry }} giorni alla scadenza</span>
+                                {% elif days_to_expiry < 0 %}
+                                    <span class="badge bg-danger">Scaduto</span>
+                                {% endif %}
+                            {% else %}
+                                Non inserito
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="label">Tessera sanitaria</div>
+                        <div class="value">{{ guest.health_card or 'Non inserito' }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="label">Scadenza tessera sanitaria</div>
+                        <div class="value">{{ guest.health_card_expiry.strftime('%d/%m/%Y') if guest.health_card_expiry else 'Non inserito' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Alloggio</h5>
+                </div>
+                <div class="card-body guest-detail">
+                    <div class="mb-3">
+                        <div class="label">Data di inserimento</div>
+                        <div class="value">{{ guest.entry_date.strftime('%d/%m/%Y') if guest.entry_date else 'Non inserito' }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="label">Stanza</div>
+                        <div class="value">{{ guest.room_number or 'Non inserito' }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="label">Piano</div>
+                        <div class="value">{{ guest.floor or 'Non inserito' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Relazioni familiari</h5>
+                </div>
+                <div class="card-body guest-detail">
+                    <div class="mb-3">
+                        <div class="value">
+                            {% if guest.family_relations %}
+                                {{ guest.family_relations|nl2br }}
+                            {% else %}
+                                Nessuna relazione familiare specificata
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if custom_fields %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Campi personalizzati</h5>
+        </div>
+        <div class="card-body guest-detail">
+            <div class="row">
+                {% for field in custom_fields %}
+                <div class="col-md-6 mb-3">
+                    <div class="label">{{ field.field_name }}</div>
+                    <div class="value">{{ field.field_value }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="mb-4">
+        <a href="{{ url_for('archive') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Torna all'archivio
+        </a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set the current date for calculating days to expiry
+        window.now = new Date();
+    });
+</script>
+{% endblock %}

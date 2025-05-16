@@ -1,0 +1,286 @@
+/* Ancora CAS Management System Styles */
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    padding: 48px 0 0;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    background-color: #343a40;
+}
+
+.sidebar-sticky {
+    position: relative;
+    top: 0;
+    height: calc(100vh - 48px);
+    padding-top: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.sidebar .nav-link {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.75);
+    padding: 0.75rem 1rem;
+}
+
+.sidebar .nav-link:hover {
+    color: #fff;
+}
+
+.sidebar .nav-link.active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar .nav-link i {
+    margin-right: 10px;
+}
+
+/* Main content */
+.main-content {
+    margin-left: 250px;
+    padding: 30px;
+}
+
+@media (max-width: 767.98px) {
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .sidebar {
+        width: 100%;
+        position: relative;
+        height: auto;
+        padding: 0;
+    }
+    
+    .sidebar-sticky {
+        height: auto;
+    }
+}
+
+/* Header */
+.navbar {
+    padding: 0.5rem 1rem;
+    background-color: #007bff !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: white !important;
+}
+
+.navbar-brand i {
+    margin-right: 10px;
+}
+
+/* Cards */
+.card {
+    margin-bottom: 20px;
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border-radius: 0.5rem;
+}
+
+.card-header {
+    background-color: rgba(0, 123, 255, 0.1);
+    border-bottom: 1px solid rgba(0, 123, 255, 0.2);
+    font-weight: 500;
+}
+
+/* Custom styles for statistics cards */
+.stat-card {
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card .card-body {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.stat-card .stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #007bff;
+}
+
+.stat-card .stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card .stat-label {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+/* Form styles */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+/* Tables */
+.table thead th {
+    font-weight: 600;
+    background-color: rgba(0, 123, 255, 0.1);
+    border-top: none;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+.btn-custom-blue {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.btn-custom-blue:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+    color: white;
+}
+
+/* Login page */
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f8f9fa;
+}
+
+.login-form {
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.login-logo {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #007bff;
+}
+
+.login-logo i {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Footer */
+.footer {
+    background-color: #f8f9fa;
+    padding: 1rem 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid #e9ecef;
+    text-align: center;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* Custom fields */
+.custom-fields-container {
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: #f8f9fa;
+}
+
+.custom-field-row {
+    margin-bottom: 1rem;
+}
+
+/* Alerts */
+.alert {
+    margin-bottom: 1.5rem;
+    border-radius: 0.25rem;
+}
+
+/* Data export */
+.export-form {
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Guest detail */
+.guest-detail .label {
+    font-weight: 500;
+    color: #6c757d;
+}
+
+.guest-detail .value {
+    font-weight: 400;
+    color: #212529;
+}
+
+/* Fiscalcode button */
+#calculate-cf-btn {
+    margin-top: 10px;
+}
+
+/* Expiring permits table */
+.expiring-permits {
+    background-color: #fff3cd;
+    color: #856404;
+    border-color: #ffeeba;
+}
+
+.expiring-permits .card-header {
+    background-color: #ffea9a;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .stat-card .stat-icon {
+        font-size: 2rem;
+    }
+    
+    .stat-card .stat-value {
+        font-size: 1.5rem;
+    }
+    
+    .stat-card .stat-label {
+        font-size: 0.875rem;
+    }
+}

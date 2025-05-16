@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}Login - Ancora CAS{% endblock %}
+
+{% block login_content %}
+<div class="login-container">
+    <div class="login-form">
+        <div class="login-logo">
+            <i class="fas fa-anchor"></i>
+            <div>Ancora CAS</div>
+        </div>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Accedi</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
