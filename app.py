@@ -29,7 +29,7 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # Configure database
 # Usa PostgreSQL per evitare errori di database in sola lettura
-database_url = os.environ.get('DATABASE_URL')
+database_url = os.environ.get('postgresql://postgres:ancoracas25@db.nffmrktusbvugnlypjcc.supabase.co:5432/postgres')
 if database_url:
     print(f"Usando database PostgreSQL")
 else:
